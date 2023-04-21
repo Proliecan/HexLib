@@ -86,11 +86,11 @@ namespace hexlib
             return new Vector2((float) (Size.x * Math.Cos(angle)), (float) (Size.y * Math.Sin(angle)));
         }
         
-        public Vector2[] HexCorners(Layout layout, Hex hex){
+        public Vector2[] HexCorners(Hex hex){
             var corners = new Vector2[6];
-            var center = layout.HexToWorld(hex);
+            var center = HexToWorld(hex);
             for (var i = 0; i < 6; i++){
-                var offset = layout.HexCornerOffset(i);
+                var offset = HexCornerOffset(i);
                 corners[i] = new Vector2(center.x + offset.x, center.y + offset.y);
             }
 
