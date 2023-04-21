@@ -44,28 +44,29 @@ namespace hexlib
             else
                 return a.Q != b.Q || a.R != b.R;
         }
-        
+
         public override bool Equals(object obj){
             // reusing the == operator
-            return this == (Hex)obj;
+            return this == (Hex) obj;
         }
 
         // hashcode
         public override int GetHashCode(){
             return Q.GetHashCode() ^ R.GetHashCode();
         }
-        
+
         // distance
         public static int Distance(Hex a, Hex b){
             return (Mathf.Abs(a.Q - b.Q) + Mathf.Abs(a.R - b.R) + Mathf.Abs(a.S - b.S)) / 2;
         }
-        
+
         public int distanceFrom(Hex other){
             return Distance(this, other);
         }
 
         // neighbors
-        public enum Direction{
+        public enum Direction
+        {
             NE = 0,
             E = 1,
             SE = 2,
@@ -73,7 +74,7 @@ namespace hexlib
             W = 4,
             NW = 5
         }
-        
+
         public static Hex Neighbor(Hex hex, Direction direction){
             switch (direction){
                 case Direction.NE:
@@ -92,21 +93,37 @@ namespace hexlib
                     return null;
             }
         }
-        
+
         public static Hex[] Neighbors(Hex hex){
             Hex[] neighbors = new Hex[6];
             for (int i = 0; i < 6; i++){
-                neighbors[i] = Neighbor(hex, (Direction)i);
+                neighbors[i] = Neighbor(hex, (Direction) i);
             }
+
             return neighbors;
         }
-        
+
         public Hex direction(Direction direction){
             return Neighbor(this, direction);
         }
-        
+
         public Hex[] directions(){
             return Neighbors(this);
         }
+    }
+
+    public class FractionalHex : Hex
+    {
+        public FractionalHex(int q, int r) : base(q, r){ 
+            Q = q;
+            R = r;
+        }
+
+        public new float Q{ get; }
+        public new float R{ get; }
+        public new float S => -(Q + R);
+        
+        public new Vector3 CubeCoordinates => new Vector3(Q, R, S);
+        public new Vector2 AxialCoordinates => new Vector2(Q, R);
     }
 }
