@@ -110,20 +110,32 @@ namespace hexlib
         public Hex[] directions(){
             return Neighbors(this);
         }
+        
+        
     }
 
-    public class FractionalHex : Hex
+    public class FractionalHex
     {
-        public FractionalHex(int q, int r) : base(q, r){ 
+        public FractionalHex(double q, double r){ 
             Q = q;
             R = r;
         }
 
-        public new float Q{ get; }
-        public new float R{ get; }
-        public new float S => -(Q + R);
+        public double Q{ get; }
+        public double R{ get; }
+        public double S => -(Q + R);
         
-        public new Vector3 CubeCoordinates => new Vector3(Q, R, S);
-        public new Vector2 AxialCoordinates => new Vector2(Q, R);
+        /// <summary>
+        /// ATTENTION: DOUBLES ARE ROUNDED TO FLOATS HERE!
+        /// Some precision might be lost!
+        /// </summary>
+        public Vector3 CubeCoordinates => new Vector3((float)Q, (float)R, (float)S);
+        
+        /// <summary>
+        /// ATTENTION: DOUBLES ARE ROUNDED TO FLOATS HERE!
+        /// Some precision might be lost!
+        /// 
+        /// </summary>
+        public Vector2 AxialCoordinates => new Vector2((float)Q, (float)R);
     }
 }

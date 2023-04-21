@@ -1,4 +1,4 @@
-﻿using UnityEditor.Experimental.GraphView;
+﻿using System;
 using UnityEngine;
 
 namespace hexlib
@@ -72,6 +72,30 @@ namespace hexlib
             var x = (HexOrientation.F0 * hex.Q + HexOrientation.F1 * hex.R) * Size.x;
             var y = (HexOrientation.F2 * hex.Q + HexOrientation.F3 * hex.R) * Size.y;
             return new Vector2((float) x, (float) y) + Origin;
+        }
+
+        public FractionalHex WorldToHex(Vector2 world){
+            var pt = new Vector2(world.x - Origin.x, world.y - Origin.y);
+            var q = HexOrientation.B0 * pt.x + HexOrientation.B1 * pt.y;
+            var r = HexOrientation.B2 * pt.x + HexOrientation.B3 * pt.y;
+            return new FractionalHex(q, r);
+        }
+        
+        // corners
+        public Vector2 HexCornerOffset(int corner){
+            var angle = 2.0d * Math.PI * (HexOrientation.StartAngle - corner) / 6.0d;
+            return new Vector2((float) (Size.x * Math.Cos(angle)), (float) (Size.y * Math.Sin(angle)));
+        }
+        
+        public Vector2[] HexCorners(Layout layout, Hex hex){
+            var corners = new Vector2[6];
+            var center = layout.HexToWorld(hex);
+            for (var i = 0; i < 6; i++){
+                var offset = layout.HexCornerOffset(i);
+                corners[i] = new Vector2(center.x + offset.x, center.y + offset.y);
+            }
+
+            return corners;
         }
     }
 }
