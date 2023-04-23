@@ -236,7 +236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3e5e006232445c4ae2997acd0c7700b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 7.81, y: 5.9}
+  size: {x: 10, y: 10}
+  worldPoint: {x: -7.93, y: 3}
 --- !u!4 &839124397
 Transform:
   m_ObjectHideFlags: 0

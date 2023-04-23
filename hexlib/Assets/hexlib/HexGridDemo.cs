@@ -5,12 +5,13 @@ using UnityEngine.TestTools;
 namespace hexlib
 {
     [ExecuteInEditMode]
-    public class HexGrid : MonoBehaviour
+    public class HexGridDemo : MonoBehaviour
     {
         public Vector2 size = new(10, 10);
+        public Vector2 worldPoint = new(12, 3);
 
         //todo dynamically in start
-        public Layout HexLayout = new(Layout.Orientation.Pointy, new Vector2(10, 10), new Vector2(0, 0));
+        public Layout HexLayout = new(Layout.Orientation.Pointy, new Vector2(1, 1), Vector2.zero);
 
         //render using GL
         private void OnRenderObject(){
@@ -61,9 +62,35 @@ namespace hexlib
                     }
                 }
             }
+            
+            
+            // draw world point
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(worldPoint, 0.1f);
+            
+            // draw hex at world point
+            var hex = HexLayout.WorldToHex(worldPoint);
+            var corners2 = HexLayout.HexCorners(hex.round_to_hex());
+            
+            Gizmos.color = Color.magenta;
+            for (int i = 0; i < corners2.Length; i++){
+                Gizmos.DrawLine(corners2[i], corners2[(i + 1) % corners2.Length]);
+            }
+            
+            // draw line to world point
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(HexLayout.Origin, worldPoint);
+            
+            // draw hexes on line
+            var hexes = FractionalHex.LineDraw(new Hex(0,0), hex.round_to_hex());
+            for (int i = 0; i < hexes.Length-1; i++){
+                var corners3 = HexLayout.HexCorners(hexes[i]);
+                Gizmos.color = Color.yellow;
+                for (int j = 0; j < corners3.Length; j++){
+                    Gizmos.DrawLine(corners3[j], corners3[(j + 1) % corners3.Length]);
+                }
+            }
 
         }
-
-        //todo custom editor for hexgrid
     }
 }

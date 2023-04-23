@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace hexlib
@@ -137,5 +138,43 @@ namespace hexlib
         /// 
         /// </summary>
         public Vector2 AxialCoordinates => new Vector2((float)Q, (float)R);
+
+        /// <summary>
+        /// Rounds a FractionalHex to the nearest Hex using mathematical rounding.
+        /// </summary>
+        /// <param name="fractionalHex">The FractionalHex to round</param>
+        /// <returns>The Hex it lies in</returns>
+        public static Hex Hex_Round(FractionalHex fractionalHex){
+            int q = (int) Math.Round(fractionalHex.Q);
+            int r = (int) Math.Round(fractionalHex.R);
+
+            return new Hex(q, r);
+        }
+        
+        public Hex round_to_hex(){
+            return Hex_Round(this);
+        }
+        
+        // lerping
+        static double Lerp(double a, double b, double t){
+            return a * (1 - t) + b * t;
+        }
+        
+        public static FractionalHex Lerp(Hex a, Hex b, double t){
+            return new FractionalHex(Lerp(a.Q, b.Q, t), Lerp(a.R, b.R, t));
+        }
+        
+        // line drawing
+        public static Hex[] LineDraw(Hex a, Hex b){
+            int N = a.distanceFrom(b);
+            Hex[] results = new Hex[N + 1];
+            double step = 1.0 / Math.Max(N, 1);
+            for (int i = 0; i <= N; i++){
+                results[i] = Hex_Round(Lerp(a, b, step * i));
+            }
+            
+            return results;
+        }
+        
     }
 }
