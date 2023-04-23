@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Object = System.Object;
 
 namespace hexlib
 {
@@ -34,6 +35,45 @@ namespace hexlib
                 Mathf.Sqrt(3.0f) / 3.0f, -1.0f / 3.0f, 0.0f, 2.0f / 3.0f, 0.5f);
             public static Orientation Flat => new(3.0f / 2.0f, 0.0f, Mathf.Sqrt(3.0f) / 2.0f, Mathf.Sqrt(3.0f),
                 2.0f / 3.0f, 0.0f, -1.0f / 3.0f, Mathf.Sqrt(3.0f) / 3.0f, 0.0f);
+            
+            // equality
+            protected bool Equals(Orientation other){
+                return F0.Equals(other.F0) && F1.Equals(other.F1) && F2.Equals(other.F2) && F3.Equals(other.F3) &&
+                       B0.Equals(other.B0) && B1.Equals(other.B1) && B2.Equals(other.B2) && B3.Equals(other.B3) &&
+                       StartAngle.Equals(other.StartAngle);
+            }
+            
+            public override bool Equals(Object obj){
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((Orientation) obj);
+            }
+            
+            //operator overloads
+            public static bool operator ==(Orientation left, Orientation right){
+                return Equals(left, right);
+            }
+            
+            public static bool operator !=(Orientation left, Orientation right){
+                return !Equals(left, right);
+            }
+            
+            // hashcode
+            public override int GetHashCode(){
+                unchecked{
+                    var hashCode = F0.GetHashCode();
+                    hashCode = (hashCode * 397) ^ F1.GetHashCode();
+                    hashCode = (hashCode * 397) ^ F2.GetHashCode();
+                    hashCode = (hashCode * 397) ^ F3.GetHashCode();
+                    hashCode = (hashCode * 397) ^ B0.GetHashCode();
+                    hashCode = (hashCode * 397) ^ B1.GetHashCode();
+                    hashCode = (hashCode * 397) ^ B2.GetHashCode();
+                    hashCode = (hashCode * 397) ^ B3.GetHashCode();
+                    hashCode = (hashCode * 397) ^ StartAngle.GetHashCode();
+                    return hashCode;
+                }
+            }
         }
         
         /// <summary>
