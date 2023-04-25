@@ -17,6 +17,7 @@ on:
 
 jobs:
   test:
+    permissions: write-all
     name: 🧪Test
     runs-on: ubuntu-latest
     strategy:
@@ -53,6 +54,7 @@ jobs:
           path: ${{ steps.test.outputs.artifactsPath }}
 
   build:
+    permissions: write-all
     name: 🔧${{ matrix.targetPlatform }}
     needs: test
     runs-on: ubuntu-latest
