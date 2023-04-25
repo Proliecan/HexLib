@@ -1,0 +1,90 @@
+name: ⚙CI-Pipeline
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    branches:
+      - master
+      - develop
+  # push:
+  #   paths:
+  #     - "Assets/**"
+  #     - "Packages/**"
+  #     - "ProjectSettings/**"
+  #     - ".gitignore"
+  #     - ".github/workflows/**"
+    
+
+jobs:
+  test:
+    name: 🧪Test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        testMode:
+          - playmode
+          - editmode
+    steps:
+      - uses: actions/checkout@v3
+        name: 📥Checkout
+      - name: 🧺Cache Library Folder
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Test-Library
+      - uses: game-ci/unity-test-runner@v2
+        id: test
+        name: 🧪Run ${{ matrix.testMode }} Tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: ${{ matrix.testMode }} tests
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: test-results/${{ matrix.testMode }}
+      - uses: actions/upload-artifact@v3
+        name: 📤Upload Test Results
+        with:
+          name: ${{ matrix.testMode }}-results
+          path: ${{ steps.test.outputs.artifactsPath }}
+
+  build:
+    name: 🔧${{ matrix.targetPlatform }}
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          # - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          # - StandaloneWindows # Build a Windows standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          # - iOS # Build an iOS player.
+          # - Android # Build an Android .apk standalone app.
+          # - WebGL # WebGL.
+    steps:
+      - uses: actions/checkout@v3
+        name: 📥Checkout
+      - name: 🧺Cache Library Folder
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: ${{ matrix.targetPlatform }}-library
+      - uses: game-ci/unity-builder@v2
+        name: ☕Build ${{ matrix.targetPlatform }}
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildName: logic-gates
+      - uses: actions/upload-artifact@v3
+        name: 📤Upload Artifact
+        with:
+          name: ${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
