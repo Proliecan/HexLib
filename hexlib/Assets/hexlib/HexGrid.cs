@@ -100,6 +100,8 @@ namespace hexlib
             }
         }
     }
+    
+#if UNITY_EDITOR
 
     // custom editor for HexGrid
     [CustomEditor(typeof(HexGrid))]
@@ -118,4 +120,7 @@ namespace hexlib
             grid.Orientation = selected == 0 ? Layout.Orientation.Pointy : Layout.Orientation.Flat;
         }
     }
+
+#endif
+    
 }
