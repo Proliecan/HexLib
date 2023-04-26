@@ -56,7 +56,7 @@ jobs:
   build:
     permissions: write-all
     name: 🔧${{ matrix.targetPlatform }}
-    needs: test
+    # needs: test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
